@@ -17,6 +17,7 @@ struct AddBookView: View {
     @State private var rating = 3
     @State private var genre = "Fantasy"
     @State private var review = ""
+    @State private var showAlert = false
     let genres = ["Fantasy", "Horror", "Kids", "Mystery", "Poetry", "Romance", "Thriller"]
 
 
@@ -41,14 +42,23 @@ struct AddBookView: View {
 
                 Section {
                     Button("Save") {
-                        let newBook = Book(title: title, author: author, genre: genre, review: review, rating: rating)
-                        modelContext.insert(newBook)
-                        dismiss()
+                        if title.isEmpty || author.isEmpty {
+                            showAlert = true
+                        } else {
+                            let newBook = Book(title: title, author: author, genre: genre, review: review, rating: rating)
+                            modelContext.insert(newBook)
+                            dismiss()
+                        }
                     }
                 }
             }
         }
         .navigationTitle("Add book")
+        .alert("Input Required", isPresented: $showAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Please enter some text before submitting.")
+        }
     }
 }
 
